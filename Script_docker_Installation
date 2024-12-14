@@ -1,0 +1,33 @@
+---
+- name: Installation de Docker sur Ubuntu
+  hosts: targets
+  become: yes
+
+  tasks:
+    - name: Mettre à jour les sources apt sur Ludovic-UbuntuT1
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Installer les packages nécessaires
+      apt:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - docker.io
+        - apt-transport-https
+        - ca-certificates
+        - curl
+        - gnupg-agent
+        - software-properties-common
+
+    - name: Ajouter la clé GPG de Docker
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+
+    - name: Ajouter le dépôt Docker
+      apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable
+
+    - name: Installer Docker
+
